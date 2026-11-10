@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda Paranatinga</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>body{font-family:'Plus Jakarta Sans',sans-serif;background:#0f172a} .filter-btn.active{background:#22c55e;color:#000}</style>
+</head>
+<body class="text-white min-h-screen">
+
+<header class="bg-green-600 sticky top-0 z-50 shadow-lg">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 bg-black rounded-xl flex items-center justify-center text-2xl">📞</div>
+      <div><h1 class="font-extrabold text-xl leading-none">AGENDA PARANATINGA</h1><p class="text-green-100 text-xs">Profissionais da nossa cidade</p></div>
+    </div>
+    <button onclick="document.getElementById('modal').classList.remove('hidden')" class="bg-black text-white text-sm font-bold px-4 py-2.5 rounded-xl">+ Cadastrar Profissional</button>
+  </div>
+</header>
+
+<section class="max-w-6xl mx-auto px-4 pt-8">
+  <h2 class="text-3xl md:text-4xl font-extrabold text-center">Precisa de quem hoje?</h2>
+  <p class="text-slate-400 text-center mt-2">Ache eletricista, encanador, técnico e mais em Paranatinga - MT</p>
+  <div class="mt-6 relative max-w-xl mx-auto">
+    <input id="busca" onkeyup="filtrar()" type="text" placeholder="Buscar por nome ou serviço..." class="w-full bg-slate-800 border border-slate-700 rounded-2xl py-4 px-4 outline-none focus:border-green-500">
+  </div>
+  <div class="flex flex-wrap justify-center gap-2 mt-6">
+    <button onclick="filtrarCategoria('todos',this)" class="filter-btn active bg-slate-800 border border-slate-700 px-4 py-2 rounded-full text-sm font-bold">Todos</button>
+    <button onclick="filtrarCategoria('eletricista',this)" class="filter-btn bg-slate-800 border border-slate-700 px-4 py-2 rounded-full text-sm font-bold">⚡ Eletricista</button>
+    <button onclick="filtrarCategoria('encanador',this)" class="filter-btn bg-slate-800 border border-slate-700 px-4 py-2 rounded-full text-sm font-bold">🔧 Encanador</button>
+    <button onclick="filtrarCategoria('eletronica',this)" class="filter-btn bg-slate-800 border border-slate-700 px-4 py-2 rounded-full text-sm font-bold">📺 Técnico em Eletrônica</button>
+    <button onclick="filtrarCategoria('pedreiro',this)" class="filter-btn bg-slate-800 border border-slate-700 px-4 py-2 rounded-full text-sm font-bold">🧱 Pedreiro</button>
+    <button onclick="filtrarCategoria('pintor',this)" class="filter-btn bg-slate-800 border border-slate-700 px-4 py-2 rounded-full text-sm font-bold">🎨 Pintor</button>
+    <button onclick="filtrarCategoria('mecanico',this)" class="filter-btn bg-slate-800 border border-slate-700 px-4 py-2 rounded-full text-sm font-bold">🚗 Mecânico</button>
+    <button onclick="filtrarCategoria('arcondicionado',this)" class="filter-btn bg-slate-800 border border-slate-700 px-4 py-2 rounded-full text-sm font-bold">❄️ Ar Condicionado</button>
+  </div>
+</section>
+
+<main class="max-w-6xl mx-auto px-4 py-8">
+  <p id="contador" class="text-slate-400 text-sm mb-4">Carregando...</p>
+  <div id="lista" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+  <p id="vazio" class="hidden text-center text-slate-400 py-10">Nenhum profissional encontrado.</p>
+</main>
+
+<!-- MODAL CADASTRO -->
+<div id="modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
+  <div class="bg-slate-800 w-full max-w-md rounded-3xl p-6 relative">
+    <button onclick="document.getElementById('modal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400">✕</button>
+    <h3 class="font-extrabold text-xl">Cadastrar meu serviço</h3>
+    <p class="text-slate-400 text-sm">Preencha e seu contato vai para aprovação. É grátis!</p>
+    <form id="formCadastro" class="space-y-3 mt-4">
+      <input required id="f_nome" placeholder="Seu nome completo" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none">
+      <select required id="f_profissao" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none">
+        <option value="">Escolha sua profissão</option>
+        <option value="eletricista">Eletricista</option>
+        <option value="encanador">Encanador</option>
+        <option value="eletronica">Técnico em Eletrônica</option>
+        <option value="pedreiro">Pedreiro</option>
+        <option value="pintor">Pintor</option>
+        <option value="mecanico">Mecânico</option>
+        <option value="arcondicionado">Ar Condicionado</option>
+      </select>
+      <input required id="f_whats" placeholder="WhatsApp com DDD - ex: 66999999999" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none">
+      <input id="f_bairro" placeholder="Bairro - ex: Centro" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none">
+      <textarea id="f_desc" placeholder="O que você faz? Ex: Instalo chuveiro, tomadas..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none"></textarea>
+      <button type="submit" class="w-full bg-green-500 text-black font-bold py-3.5 rounded-xl">Enviar Cadastro</button>
+      <p class="text-xs text-slate-500 text-center">Ao enviar, você concorda em ter seu número publicado no site.</p>
+    </form>
+  </div>
+</div>
+
+<script>
+// ===== TROQUE AQUI PELO LINK DA SUA PLANILHA PUBLICADA EM CSV =====
+const LINK_PLANILHA = "COLE_AQUI_O_LINK_CSV_DA_SUA_PLANILHA";
+const SEU_WHATS = "5566981345955"; // seu número para receber os cadastros
+
+const ICONS = {eletricista:'⚡', encanador:'🔧', eletronica:'📺', pedreiro:'🧱', pintor:'🎨', mecanico:'🚗', arcondicionado:'❄️'};
+const NOMES = {eletricista:'Eletricista', encanador:'Encanador', eletronica:'Técnico em Eletrônica', pedreiro:'Pedreiro', pintor:'Pintor', mecanico:'Mecânico', arcondicionado:'Ar Condicionado'};
+
+let catAtual='todos';
+
+// Carrega da planilha
+async function carregar(){
+  try{
+    const res = await fetch(LINK_PLANILHA);
+    const texto = await res.text();
+    const linhas = texto.split('\n').slice(1);
+    const lista = document.getElementById('lista');
+    lista.innerHTML='';
+    linhas.forEach(l=>{
+      if(!l.trim()) return;
+      // separa por vírgula simples - ideal usar ; na planilha se tiver vírgula na descrição
+      const col = l.split(',');
+      const [nome, profissao, whats, desc, bairro] = col.map(c=>c.trim().replace(/"/g,''));
+      if(!nome) return;
+      lista.innerHTML += `
+      <div class="profissional bg-slate-800 border border-slate-700 rounded-3xl p-5" data-cat="${profissao.toLowerCase()}">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-green-500/20 rounded-2xl flex items-center justify-center text-2xl">${ICONS[profissao.toLowerCase()]||'🔧'}</div>
+          <div><h3 class="font-bold text-lg nome">${nome}</h3><span class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full font-bold">${NOMES[profissao.toLowerCase()]||profissao}</span></div>
+        </div>
+        <p class="text-slate-400 text-sm mt-3">${desc||''}</p>
+        <p class="text-xs text-slate-500 mt-2">📍 ${bairro||'Paranatinga - MT'}</p>
+        <div class="flex gap-2 mt-4">
+          <a href="https://wa.me/55${whats}?text=Olá!%20Vi%20seu%20contato%20na%20Agenda%20Paranatinga" target="_blank" class="flex-1 bg-green-500 text-black font-bold text-center py-3 rounded-xl text-sm">WhatsApp</a>
+          <a href="tel:+55${whats}" class="bg-slate-700 px-4 py-3 rounded-xl text-sm font-bold">Ligar</a>
+        </div>
+      </div>`;
+    });
+    filtrar();
+  }catch(e){
+    document.getElementById('contador').innerText = 'Ainda não há profissionais. Seja o primeiro a se cadastrar!';
+  }
+}
+carregar();
+
+function filtrarCategoria(cat, btn){ catAtual=cat; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); filtrar(); }
+function filtrar(){
+  let termo = document.getElementById('busca').value.toLowerCase();
+  let total=0;
+  document.querySelectorAll('.profissional').forEach(card=>{
+    let mostra = (catAtual==='todos'||card.dataset.cat===catAtual) && card.innerText.toLowerCase().includes(termo);
+    card.style.display = mostra?'block':'none'; if(mostra) total++;
+  });
+  document.getElementById('contador').innerText = total + ' profissional(is) encontrado(s)';
+  document.getElementById('vazio').classList.toggle('hidden', total>0);
+}
+
+// Quando a pessoa envia o formulário, abre seu WhatsApp com os dados prontos para você aprovar
+document.getElementById('formCadastro').addEventListener('submit', function(e){
+  e.preventDefault();
+  const nome = document.getElementById('f_nome').value;
+  const prof = document.getElementById('f_profissao').value;
+  const whats = document.getElementById('f_whats').value.replace(/\D/g,'');
+  const bairro = document.getElementById('f_bairro').value;
+  const desc = document.getElementById('f_desc').value;
+  const msg = `NOVO CADASTRO AGENDA PARANATINGA%0A%0ANome: ${nome}%0AProfissão: ${prof}%0AWhatsApp: ${whats}%0ABairro: ${bairro}%0ADescrição: ${desc}`;
+  window.open(`https://wa.me/${SEU_WHATS}?text=${msg}`, '_blank');
+  alert('Cadastro enviado! Agora é só você colar na planilha que já aparece no site.');
+  document.getElementById('modal').classList.add('hidden');
+});
+</script>
+</body>
+</html>
